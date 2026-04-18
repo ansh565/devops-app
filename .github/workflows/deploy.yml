@@ -11,16 +11,31 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Image
+      - name: Build Docker Image
         run: docker build -t ansh51/devops-app:latest .
 
-      - name: Push Image
+      - name: Push Docker Image
         run: docker push ansh51/devops-app:latest
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull ansh51/devops-app:latest
+            docker stop app || true
+            docker rm app || true
+            docker run -d -p 3000:3000 --name app ansh51/devops-app:latest
