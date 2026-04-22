@@ -324,3 +324,42 @@ Open your browser and enter:
 `http://<Public-IP>:3000`
 
 ✔ If deployment is successful, your application will be accessible
+
+
+
+## 🪜 Step 15: Test CI/CD by Making a Code Change
+
+To verify that the CI/CD pipeline is working correctly, modify the application and observe automatic deployment.
+
+### ✏️ Modify Application Code
+
+1. Open `index.js` in your repository
+
+**Before:**
+```javascript
+res.end("Hello from Docker App");
+```
+**After:**
+```javascript
+res.end("Hello from Docker App - CI/CD Test");
+```
+### 📤 Commit Changes via GitHub
+
+- Click **Edit (✏️)** on the file  
+- Make the changes  
+- Click **Commit changes**
+
+---
+
+### 🌐 Verify Output
+
+Open in browser:
+```
+http://<InstancePublicIP>:3000
+```
+
+---
+
+### ✔ Updated message should be visible
+
+### 🎉 Confirms CI/CD pipeline is working correctly
