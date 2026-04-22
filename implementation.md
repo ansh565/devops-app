@@ -117,3 +117,17 @@ Push your code:
 index.js
 package.json
 Dockerfile
+
+
+
+## 🪜 Step 7: Create GitHub Actions Workflow
+
+Create the following file in your repository:
+```
+.github/workflows/deploy.yml
+```
+
+
+
+## 🪜 Step 8: Add CI Pipeline (GitHub Actions)
+``` yaml
