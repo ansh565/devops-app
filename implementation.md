@@ -131,3 +131,196 @@ Create the following file in your repository:
 
 ## 🪜 Step 8: Add CI Pipeline (GitHub Actions)
 ``` yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t ansh51/devops-app:latest .
+
+      - name: Push Docker Image
+        run: docker push ansh51/devops-app:latest
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull ansh51/devops-app:latest
+            docker stop app || true
+            docker rm app || true
+            docker run -d -p 3000:3000 --name app ansh51/devops-app:latest
+```
+
+
+
+## 🪜 Step 9: Add GitHub Secrets
+
+Go to:
+
+GitHub Repository → Settings → Secrets and Variables → Actions
+
+Add:
+```
+DOCKER_USERNAME = ansh51
+DOCKER_PASSWORD = <your docker token>
+EC2_HOST = <your-ec2-public-ip>
+EC2_KEY = <paste full content of EC2 key pair (.pem file)>
+```
+
+
+
+## 🪜 Step 10: Create AWS CloudFormation Template
+
+In this step, we define infrastructure as code using AWS CloudFormation to automatically create:
+
+- EC2 Instance
+- Security Group
+- Docker installation setup
+
+---
+
+### 📄 CloudFormation Template
+
+```yaml
+Resources:
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and HTTP access for Docker app
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0c02fb55956c7d316   # Amazon Linux 2 (us-east-1)
+      KeyName: key6
+
+      SecurityGroups:
+        - !Ref MySecurityGroup
+
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install -y docker
+          systemctl start docker
+          systemctl enable docker
+
+          docker run -d -p 3000:3000 ansh51/devops-app:latest
+```
+Outputs:
+  InstancePublicIP:
+  
+    Description: Public IP of EC2 instance
+    
+    Value: !GetAtt MyEC2Instance.PublicIp
+
+
+
+## 🪜 Step 11: Deploy CloudFormation Stack
+
+### Navigate to CloudFormation
+
+1. Go to the [AWS CloudFormation Console](https://console.aws.amazon.com/cloudformation)
+2. Click on **Create Stack**
+3. Select **With new resources (standard)**
+
+---
+
+### Upload Template
+
+1. Choose **Upload a template file**
+2. Click **Choose file**
+3. Upload your YAML template file
+4. Click **Next**
+
+---
+
+### ⚙️ Configure Stack
+
+Provide the following details:
+
+- **Stack Name**: `devops-stack`
+- **Key Pair**: Select your EC2 key pair (used during instance creation)
+
+Click **Next**
+
+---
+
+### Review and Create
+
+1. Review all configurations
+2. Click **Create Stack**
+
+---
+
+### ⏳ Wait for Deployment
+
+- Monitor the stack status
+- Wait until it shows **CREATE_COMPLETE**
+
+✔ This indicates your infrastructure is successfully deployed
+
+
+
+## 🪜 Step 12: Verify Stack Creation
+
+After a few minutes:
+
+- Stack status should be **CREATE_COMPLETE**
+- EC2 instance will be automatically provisioned
+- Security Group will be automatically attached
+
+---
+
+## 🪜 Step 13: Get Public IP of EC2 Instance
+
+1. Go to **CloudFormation → Stacks**
+2. Select your stack (`devops-stack`)
+3. Open the **Outputs** tab
+4. Copy the value of:
+   - **InstancePublicIP**
+
+---
+
+## 🪜 Step 14: Access Application
+
+Open your browser and enter:
+
+`http://<Public-IP>:3000`
+
+✔ If deployment is successful, your application will be accessible
