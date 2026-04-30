@@ -119,6 +119,8 @@ package.json
 Dockerfile
 
 
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7722).png?raw=true)
+
 
 ## 🪜 Step 7: Create GitHub Actions Workflow
 
@@ -175,6 +177,8 @@ jobs:
 ```
 
 
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(8145).png?raw=true)
+
 
 ## 🪜 Step 9: Add GitHub Secrets
 
@@ -190,6 +194,10 @@ EC2_HOST = <your-ec2-public-ip>
 EC2_KEY = <paste full content of EC2 key pair (.pem file)>
 ```
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(8146).png?raw=true)
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7856).png?raw=true)
 
 
 ## 🪜 Step 10: Create AWS CloudFormation Template
@@ -242,6 +250,8 @@ Resources:
 
           docker run -d -p 3000:3000 ansh51/devops-app:latest
 ```
+
+
 Outputs:
   InstancePublicIP:
   
@@ -268,6 +278,10 @@ Outputs:
 3. Upload your YAML template file
 4. Click **Next**
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7756).png?raw=true)
+
+
 ---
 
 ### ⚙️ Configure Stack
@@ -281,19 +295,16 @@ Click **Next**
 
 ---
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7757).png?raw=true)
+
+
 ### Review and Create
 
 1. Review all configurations
 2. Click **Create Stack**
 
 ---
-
-### ⏳ Wait for Deployment
-
-- Monitor the stack status
-- Wait until it shows **CREATE_COMPLETE**
-
-✔ This indicates your infrastructure is successfully deployed
 
 
 
@@ -307,6 +318,10 @@ After a few minutes:
 
 ---
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7798).png?raw=true)
+
+
 ## 🪜 Step 13: Get Public IP of EC2 Instance
 
 1. Go to **CloudFormation → Stacks**
@@ -317,6 +332,10 @@ After a few minutes:
 
 ---
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7830).png?raw=true)
+
+
 ## 🪜 Step 14: Access Application
 
 Open your browser and enter:
@@ -325,6 +344,8 @@ Open your browser and enter:
 
 ✔ If deployment is successful, your application will be accessible
 
+
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7770).png?raw=true)
 
 
 ## 🪜 Step 15: Test CI/CD by Making a Code Change
@@ -359,6 +380,7 @@ http://<InstancePublicIP>:3000
 ```
 
 ---
+![Screenshot Example](https://github.com/ansh565/devops-app/blob/main/Screenshots/Screenshot%20(7851).png?raw=true)
 
 ### ✔ Updated message should be visible
 
